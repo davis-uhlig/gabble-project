@@ -1,0 +1,14 @@
+<nav class="nav-main">
+  <div class="nav-titles">
+    <h4 class="nav-links"><a href="/home">Gabble</a></h4>
+    <h4 class="nav-links"><a href="/createGab">Create A New Gab</a></h4>
+    <h4 class="nav-links">Logged in as {{username}}</h4>
+    <form action="/logout" method="post">
+      <button type="submit" class="nav-links">Logout</button>
+    </form>
+  </div>
+</nav>
+<h2>Recent Gabs</h2>
+{{#messages}}
+<p>{{body}}</p>
+{{/messages}}

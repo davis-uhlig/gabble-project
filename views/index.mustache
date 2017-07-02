@@ -1,6 +1,15 @@
 <div class="">
   <h3>Please Login With Your Username and Password</h3>
-  <form action="/login" method="post">
+  {{#errors.username}}
+  <p>{{msg}}</p>
+  {{/errors.username}}
+  {{#errors.password}}
+  <p>{{msg}}</p>
+  {{/errors.password}}
+  {{#noMatch}}
+  <p>{{message}}</p>
+  {{/noMatch}}
+  <form action="/{{id}}" method="post">
     <input type="text" name="username" placeholder="username">
     <input type="text" name="password" placeholder='password'>
     <button type="submit">Submit</button>
