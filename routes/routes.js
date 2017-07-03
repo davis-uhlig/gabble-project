@@ -10,6 +10,8 @@ router.use(session({
   saveUninitialized: false
 }));
 
+let likes = 0;
+
 const checkUser = function(req, res, next){
   if(req.session.username){
     next();
@@ -18,10 +20,11 @@ const checkUser = function(req, res, next){
   }
 }
 
-const getUserId = function (req, res, next) {
-  models.users.findById(req.params.id).then(function(userId){
-    if(userId) {
-      req.userId = userId;
+const getGab = function (req, res, next) {
+  models.messages.findById(req.params.gabId).then(function(gab){
+    if(gab) {
+      req.gab = gab;
+      next();
     } else {
       res.status(404).send("Not Found");
     }
@@ -40,9 +43,11 @@ router.get('/home', checkUser, function(req, res){
   models.messages.findAll({
     order: [['createdAt', 'DESC']]
   }).then(function(messages){
-  res.render('home', {username: req.session.username, messages: messages})
-})
+  res.render('home', {username: req.session.username, messages: messages, likes: likes})
 });
+
+});
+
 
 router.get('/createGab', checkUser, function(req, res){
   res.render('createGab');
@@ -72,10 +77,10 @@ router.post('/', function(req, res){
           username: req.body.username,
           password: req.body.password
         }
-      }).then(function(users){
-        if(users){
-          req.session.username = req.body.username;
-
+      }).then(function(user){
+        if(user){
+          req.session.username = user.username;
+          req.session.userId = user.id;
           res.redirect('/home');
         }
         else {
@@ -98,11 +103,11 @@ router.post('/createGab',function(req, res){
 
   req.checkBody('newGab', 'You Must Enter a New Gab').notEmpty();
 
-  newGab = {
+  const newGab = {
     body: req.body.newGab,
-    userId: 1
+    userId: req.session.userId
   };
-
+console.log(newGab);
   req.getValidationResult().then(function(result){
     if(result.isEmpty()){
       models.messages.create(newGab).then(function(){
@@ -128,9 +133,22 @@ router.post('/createGab',function(req, res){
 });
 });
 
+router.post('/like', function(req, res){
+  likes = likes + 1;
+  res.redirect('/home');
+})
+
 router.post('/logout', function(req, res){
   req.session.destroy();
     res.redirect("/");
 })
+
+router.post("/home/:gabId/delete", getGab, function(req, res) {
+  // if(models.messages.userId === req.session.userId) {
+    req.gab.destroy().then(function() {
+    res.redirect("/home");
+    // });
+  }); 
+});
 
 module.exports = router;

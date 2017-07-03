@@ -10,5 +10,15 @@
 </nav>
 <h2>Recent Gabs</h2>
 {{#messages}}
-<p>{{body}}</p>
+<div class="gab">
+  <p class="gab-paragraph">{{username}}: {{body}}</p>
+  <p class="gab-paragraph">{{createdAt}}</p>
+  <p class="gab-paragraph">likes: {{likes}}</p>
+</div>
+<form action="/like" method="post">
+  <button type="submit">Like</button>
+</form>
+<form action="/home/{{id}}/delete" method="post">
+  <button type="submit">Delete Gab</button>
+</form>
 {{/messages}}

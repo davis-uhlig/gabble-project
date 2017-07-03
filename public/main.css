@@ -1,3 +1,49 @@
+body {
+  background: url(./images/gabble-background.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.login-header {
+  text-align: center;
+}
+
+.login {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.login-form {
+  margin-top: 3%;
+  width: 25%;
+  line-height: 300%;
+  font-size: 110%;
+}
+
+#login-submit {
+  width: 10%;
+  line-height: 170%;
+  cursor: pointer;
+}
+
+.gab-paragraph {
+  margin-left: 2%;
+  margin-top: 0%;
+  margin-bottom: 1%;
+  padding: 2%;
+}
+
+
+.gab {
+  background-color: white;
+  width: 40%;
+  border-radius: 4px;
+  margin-top: 2%;
+}
+
 .nav-titles {
   display: flex;
 }
@@ -5,4 +51,21 @@
 .nav-links {
   margin-top: 10px;
   margin-right: 20px;
+}
+
+.signUp {
+  text-align: center;
+}
+
+.signup-input {
+  margin-top: 3%;
+  width: 25%;
+  line-height: 300%;
+  font-size: 110%;
+}
+
+#signup-submit {
+  width: 10%;
+  line-height: 170%;
+  cursor: pointer;
 }
