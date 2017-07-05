@@ -11,6 +11,8 @@ router.use(session({
 }));
 
 let likes = 0;
+let messageCreator;
+let creators = [];
 
 const checkUser = function(req, res, next){
   if(req.session.username){
@@ -40,10 +42,34 @@ router.get('/createAccount', function(req, res){
 });
 
 router.get('/home', checkUser, function(req, res){
+  creators = [];
   models.messages.findAll({
-    order: [['createdAt', 'DESC']]
+    order: [['createdAt', 'DESC']],
+    include: [{
+      model: models.users,
+      as: 'users'
+    }, {model: models.likes, as:'likes'}]
   }).then(function(messages){
-  res.render('home', {username: req.session.username, messages: messages, likes: likes})
+    // console.log(messages[0].users.dataValues.username);
+    // console.log(messages[0]);
+    messages.forEach(function(message) {
+
+     messageCreator = {
+       messageUser: message.users.dataValues.username,
+       body: message.body,
+       createdAt: message.createdAt,
+       userId: message.userId,
+       id: message.id
+     }
+     creators.push(messageCreator);
+    //  console.log(messageCreator);
+    if (req.session.userId === message.dataValues.userId) {
+      messageCreator.delete = true;
+    }
+    });
+
+    // let messageUser = messages[0].users.dataValues.username;
+  res.render('home', {username: req.session.username, messages: creators, likes: likes, })
 });
 
 });
@@ -93,7 +119,7 @@ router.post('/', function(req, res){
     }
     else {
       const errors = result.mapped();
-      console.log(errors);
+      // console.log(errors);
       res.render('index', {errors: errors})
     }
   })
@@ -107,7 +133,7 @@ router.post('/createGab',function(req, res){
     body: req.body.newGab,
     userId: req.session.userId
   };
-console.log(newGab);
+// console.log(newGab);
   req.getValidationResult().then(function(result){
     if(result.isEmpty()){
       models.messages.create(newGab).then(function(){
@@ -116,7 +142,7 @@ console.log(newGab);
     }
     else {
       const gabErrors = result.mapped();
-      console.log(gabErrors);
+      // console.log(gabErrors);
       res.render('createGab', {gabErrors: gabErrors});
     }
   })
@@ -129,7 +155,7 @@ console.log(newGab);
     }
   ]
 }).then(function(message){
-   console.log(message)
+  //  console.log(message)
 });
 });
 
@@ -148,7 +174,7 @@ router.post("/home/:gabId/delete", getGab, function(req, res) {
     req.gab.destroy().then(function() {
     res.redirect("/home");
     // });
-  }); 
+  });
 });
 
 module.exports = router;

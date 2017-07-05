@@ -11,14 +11,18 @@
 <h2>Recent Gabs</h2>
 {{#messages}}
 <div class="gab">
-  <p class="gab-paragraph">{{username}}: {{body}}</p>
+
+  <p class="gab-paragraph">{{messageUser}}: {{body}}</p>
+
   <p class="gab-paragraph">{{createdAt}}</p>
   <p class="gab-paragraph">likes: {{likes}}</p>
 </div>
 <form action="/like" method="post">
   <button type="submit">Like</button>
 </form>
+{{#delete}}
 <form action="/home/{{id}}/delete" method="post">
   <button type="submit">Delete Gab</button>
 </form>
+{{/delete}}
 {{/messages}}

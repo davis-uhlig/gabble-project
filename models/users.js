@@ -6,6 +6,9 @@ module.exports = function(sequelize, DataTypes) {
   }, {});
   users.associate = function(models) {
     users.hasMany(models.messages, {as: 'messages', foreignKey: 'userId'})
+    users.hasMany(models.likes, {as: 'likes', foreignKey: 'userId'})
   }
+
+
   return users;
 };
