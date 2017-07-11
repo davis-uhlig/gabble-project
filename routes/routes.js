@@ -24,33 +24,6 @@ const checkUser = function(req, res, next){
   }
 }
 
-// const userLike = function(req, res, next){
-//   // likeUsers = [];
-//
-//   console.log('are we getting in here');
-//   models.likes.findAll({
-//     where: {
-//       messageId: req.params.gabId
-//     }, include: [{
-//       model: models.users,
-//       as: 'users'
-//     }]
-//   }).then(function(likes){
-//     likes.forEach(function(like){
-//       // models.users.findById(like.userId).then(function(likeUser){
-//         // console.log(likeUser);
-//         // likeUsers.push(likeUser.dataValues.username);
-//         // console.log(likeUser.dataValues.username);
-//
-//         console.log(like.users.username);
-//       })
-//
-//
-//     });
-//     console.log(likeUsers);
-//     next();
-//   // })
-// }
 
 const getGab = function (req, res, next) {
   models.messages.findById(req.params.gabId).then(function(gab){
@@ -73,7 +46,7 @@ router.get('/createAccount', function(req, res){
 
 router.get('/home', checkUser, function(req, res){
   creators = [];
-  // console.log("this is the array", likeUsers);
+
   models.messages.findAll({
     order: [['createdAt', 'DESC']],
     include: [{
@@ -81,8 +54,7 @@ router.get('/home', checkUser, function(req, res){
       as: 'users'
     }, {model: models.likes, as:'likes'}]
   }).then(function(messages){
-    // console.log(messages[0].users.dataValues.username);
-    // console.log(messages[0]);
+
     messages.forEach(function(message) {
 
      messageCreator = {
@@ -95,13 +67,13 @@ router.get('/home', checkUser, function(req, res){
 
      }
      creators.push(messageCreator);
-    //  console.log(messageCreator);
+
     if (req.session.userId === message.dataValues.userId) {
       messageCreator.delete = true;
     }
     });
 
-    // let messageUser = messages[0].users.dataValues.username;
+
   res.render('home', {username: req.session.username, messages: creators, likes: likes})
 });
 
@@ -152,7 +124,7 @@ router.post('/', function(req, res){
     }
     else {
       const errors = result.mapped();
-      // console.log(errors);
+
       res.render('index', {errors: errors})
     }
   })
@@ -166,7 +138,7 @@ router.post('/createGab',function(req, res){
     body: req.body.newGab,
     userId: req.session.userId
   };
-// console.log(newGab);
+
   req.getValidationResult().then(function(result){
     if(result.isEmpty()){
       models.messages.create(newGab).then(function(){
@@ -175,7 +147,7 @@ router.post('/createGab',function(req, res){
     }
     else {
       const gabErrors = result.mapped();
-      // console.log(gabErrors);
+
       res.render('createGab', {gabErrors: gabErrors});
     }
   })
@@ -188,7 +160,7 @@ router.post('/createGab',function(req, res){
     }
   ]
 }).then(function(message){
-  //  console.log(message)
+
 });
 });
 
@@ -199,7 +171,7 @@ router.post('/:gabId/like', getGab,  function(req, res){
   }
   models.likes.create(newLike).then(function(){
       messageCreator.likes++;
-      // console.log(likeUsers);
+
       res.redirect('/home');
   })
 
@@ -211,18 +183,14 @@ router.post('/logout', function(req, res){
 })
 
 router.post("/home/:gabId/delete", getGab, function(req, res) {
-  // if(models.messages.userId === req.session.userId) {
+
     req.gab.destroy().then(function() {
     res.redirect("/home");
-    // });
+
   });
 });
 
-// router.get("/likes", checkUser, userLike, function(req, res){
-//
-//
-//
-// })
+
 
 router.post('/likeUsers/:gabId', getGab, function(req, res){
   let likeUsers = [];
@@ -235,7 +203,7 @@ router.post('/likeUsers/:gabId', getGab, function(req, res){
     }]
   }).then(function(likes){
     likes.forEach(function(like){
-  
+
         likeUsers.push(like.users.username);
         console.log(like.users.username);
       })
