@@ -64,6 +64,10 @@ body {
   font-size: 110%;
 }
 
+.likes {
+  margin-left: 5%;
+}
+
 #signup-submit {
   width: 10%;
   line-height: 170%;

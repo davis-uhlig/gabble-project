@@ -15,9 +15,13 @@
   <p class="gab-paragraph">{{messageUser}}: {{body}}</p>
 
   <p class="gab-paragraph">{{createdAt}}</p>
-  <p class="gab-paragraph">likes: {{likes}}</p>
+  <form class="" action="/likeUsers/{{id}}" method="post">
+    <p><button type="submit" name="button">likes: </button>{{likes}}</p>
+  </form>
+
+
 </div>
-<form action="/like" method="post">
+<form action="/{{id}}/like" method="post">
   <button type="submit">Like</button>
 </form>
 {{#delete}}

@@ -10,9 +10,11 @@ router.use(session({
   saveUninitialized: false
 }));
 
-let likes = 0;
+let likes;
 let messageCreator;
 let creators = [];
+let liked = false;
+
 
 const checkUser = function(req, res, next){
   if(req.session.username){
@@ -21,6 +23,34 @@ const checkUser = function(req, res, next){
     res.redirect('/')
   }
 }
+
+// const userLike = function(req, res, next){
+//   // likeUsers = [];
+//
+//   console.log('are we getting in here');
+//   models.likes.findAll({
+//     where: {
+//       messageId: req.params.gabId
+//     }, include: [{
+//       model: models.users,
+//       as: 'users'
+//     }]
+//   }).then(function(likes){
+//     likes.forEach(function(like){
+//       // models.users.findById(like.userId).then(function(likeUser){
+//         // console.log(likeUser);
+//         // likeUsers.push(likeUser.dataValues.username);
+//         // console.log(likeUser.dataValues.username);
+//
+//         console.log(like.users.username);
+//       })
+//
+//
+//     });
+//     console.log(likeUsers);
+//     next();
+//   // })
+// }
 
 const getGab = function (req, res, next) {
   models.messages.findById(req.params.gabId).then(function(gab){
@@ -43,6 +73,7 @@ router.get('/createAccount', function(req, res){
 
 router.get('/home', checkUser, function(req, res){
   creators = [];
+  // console.log("this is the array", likeUsers);
   models.messages.findAll({
     order: [['createdAt', 'DESC']],
     include: [{
@@ -59,7 +90,9 @@ router.get('/home', checkUser, function(req, res){
        body: message.body,
        createdAt: message.createdAt,
        userId: message.userId,
-       id: message.id
+       id: message.id,
+       likes: message.likes.length
+
      }
      creators.push(messageCreator);
     //  console.log(messageCreator);
@@ -69,7 +102,7 @@ router.get('/home', checkUser, function(req, res){
     });
 
     // let messageUser = messages[0].users.dataValues.username;
-  res.render('home', {username: req.session.username, messages: creators, likes: likes, })
+  res.render('home', {username: req.session.username, messages: creators, likes: likes})
 });
 
 });
@@ -159,9 +192,17 @@ router.post('/createGab',function(req, res){
 });
 });
 
-router.post('/like', function(req, res){
-  likes = likes + 1;
-  res.redirect('/home');
+router.post('/:gabId/like', getGab,  function(req, res){
+  let newLike = {
+    messageId: req.params.gabId,
+    userId: req.session.userId
+  }
+  models.likes.create(newLike).then(function(){
+      messageCreator.likes++;
+      // console.log(likeUsers);
+      res.redirect('/home');
+  })
+
 })
 
 router.post('/logout', function(req, res){
@@ -177,4 +218,29 @@ router.post("/home/:gabId/delete", getGab, function(req, res) {
   });
 });
 
+// router.get("/likes", checkUser, userLike, function(req, res){
+//
+//
+//
+// })
+
+router.post('/likeUsers/:gabId', getGab, function(req, res){
+  let likeUsers = [];
+  models.likes.findAll({
+    where: {
+      messageId: req.params.gabId
+    }, include: [{
+      model: models.users,
+      as: 'users'
+    }]
+  }).then(function(likes){
+    likes.forEach(function(like){
+  
+        likeUsers.push(like.users.username);
+        console.log(like.users.username);
+      })
+  res.render('likes', {like: likeUsers})
+
+})
+})
 module.exports = router;
